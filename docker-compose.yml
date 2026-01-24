@@ -1,0 +1,8 @@
+version: "3.8"
+
+services:
+  durable-engine:
+    build: .
+    container_name: durable-execution-engine
+    volumes:
+      - ./engine.db:/root/engine.db

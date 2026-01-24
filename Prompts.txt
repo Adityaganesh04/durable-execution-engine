@@ -1,0 +1,36 @@
+# AI Usage & Development Log
+
+## Philosophy
+I utilized AI (ChatGPT & Cursor) to accelerate boilerplate generation and explore architectural patterns, but all core logic, concurrency handling, and system configuration were manually reviewed and tested.
+
+## Assignment 1: Native Durable Execution Engine (Go)
+Goal: Build a fault-tolerant engine with SQLite persistence.
+
+1.  Architecture Design: * Prompt: "I need to implement a 'Durable Execution' pattern in Go similar to Temporal. What is the best way to handle state persistence using SQLite to avoid re-executing side effects?"
+    * Outcome: AI suggested a check-act-persist loop. I refined this to ensure the database write happens *after* the function execution to prevent false positives.
+
+2.  Concurrency & Safety:
+    * Prompt: "Generate a generic `Step[T]` function in Go that uses `database/sql`. Ensure it is thread-safe for concurrent writes."
+    * Manual Fix: The initial AI code didn't handle SQLite locking correctly. I manually added WAL mode configuration to `store.go` to support concurrent readers/writers.
+
+3.  Infrastructure (Docker):
+    * Prompt: "Create a Docker Compose file that persists the SQLite file."
+    * Manual Fix: The AI originally suggested using a named volume which made it hard to inspect the DB. I changed this to a bind mount (`./workflow.db:/root/workflow.db`) to ensure I could verify the persistence file on the host machine.
+
+## Assignment 2: High-Throughput Fan-Out Engine (Java)
+Goal: High-concurrency ingestion using Java 21 Virtual Threads.
+
+1.  Core Logic:
+    * Prompt: "Generate a Java 21 `Main` class that uses `newVirtualThreadPerTaskExecutor` to process a CSV file line-by-line without loading it all into memory."
+    
+2.  Resilience Implementation:
+    * Prompt: "How can I rate-limit a specific sink to 50 requests/second in Java without blocking the main ingestion thread?"
+    * Outcome: Implemented the suggested `Semaphore` pattern in `RestSink.java` to handle backpressure.
+
+3.  Design Patterns:
+    * Prompt: "Generate a Strategy Pattern interface for transforming CSV data into JSON, XML, and Protobuf formats."
+
+## Summary of Manual Interventions
+- Fixed Docker volume mapping to ensure true persistence on Windows.
+- Tuned the crash simulation logic to ensure the process exits with the correct status code.
+- Manually implemented the "Resume" logic to verify skipped steps in the logs.
