@@ -1,11 +1,8 @@
 # Native Durable Execution Engine  
-**Zeotap – Software Engineer Intern (Assignment 1)**
 
 ---
 
 ## Overview
-
-This repository contains the submission for **Zeotap Software Engineer Intern – Assignment 1**.
 
 The project focuses on building a **production-grade, fault-tolerant backend system** using a **native durable execution pattern**.  
 The engine ensures correctness and durability even in the presence of crashes, restarts, and concurrent execution.
@@ -22,13 +19,7 @@ durable-execution-engine/
 └── README.md              # Project documentation
 ```
 
-### Project Status
-- ✅ **Completed**
-- ✅ Crash and resume capability **verified**
-
 ---
-
-## Assignment 1: Native Durable Execution Engine
 
 ### Tech Stack
 - **Go:** 1.25  
@@ -81,12 +72,12 @@ The SQLite database is mounted to the host machine to preserve state across cras
 
 #### Windows (PowerShell)
 ```powershell
-docker run --rm -v ${PWD}:/root/ durable-execution-engine-durable-engine --crash-after=2
+docker run --rm -v ${PWD}\engine.db:/root/engine.db durable-execution-engine-durable-engine --crash-after=2
 ```
 
 #### Linux / macOS / Git Bash
 ```bash
-docker run --rm -v $(pwd):/root/ durable-execution-engine-durable-engine --crash-after=2
+docker run --rm -v $(pwd)/engine.db:/root/engine.db durable-execution-engine-durable-engine --crash-after=2
 ```
 
 **Expected Result:**
@@ -99,8 +90,14 @@ docker run --rm -v $(pwd):/root/ durable-execution-engine-durable-engine --crash
 
 Restart the engine using the default command:
 
+#### Windows (PowerShell)
+```powershell
+docker run --rm -v ${PWD}\engine.db:/root/engine.db durable-execution-engine-durable-engine
+```
+
+#### Linux / macOS / Git Bash
 ```bash
-docker compose up
+docker run --rm -v $(pwd)/engine.db:/root/engine.db durable-execution-engine-durable-engine --crash-after=2
 ```
 
 **Expected Result:**
@@ -112,7 +109,7 @@ docker compose up
 
 ## AI Usage Declaration
 
-As permitted by the assignment instructions, AI tools (**ChatGPT** and **Cursor**) were used to:
+AI tools (**ChatGPT** and **Cursor**) were used to:
 
 - Accelerate boilerplate generation
 - Explore architectural patterns
