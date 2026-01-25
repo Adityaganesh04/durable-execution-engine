@@ -1,76 +1,140 @@
-Overview
+# Native Durable Execution Engine  
+**Zeotap – Software Engineer Intern (Assignment 1)**
 
-This repository contains the submission for the Zeotap Software Engineer Intern – Assignment 1.
-The project focuses on building a production-grade, fault-tolerant backend system using a native durable execution pattern.
+---
 
-Repository Structure
+## Overview
 
+This repository contains the submission for **Zeotap Software Engineer Intern – Assignment 1**.
+
+The project focuses on building a **production-grade, fault-tolerant backend system** using a **native durable execution pattern**.  
+The engine ensures correctness and durability even in the presence of crashes, restarts, and concurrent execution.
+
+---
+
+## Repository Structure
+
+```
 durable-execution-engine/
-A Go-based native durable execution engine using SQLite and Docker
-Status: Completed (Crash and Resume capability verified)
+├── engine/                # Core durable execution engine (Go)
+├── docker-compose.yml     # Containerized execution setup
+├── Prompts.txt            # AI usage and architectural decision log
+└── README.md              # Project documentation
+```
 
-Prompts.txt
-A detailed log of AI tools used and all manual architectural decisions made
+### Project Status
+- ✅ **Completed**
+- ✅ Crash and resume capability **verified**
 
-Assignment 1: Native Durable Execution Engine
+---
 
-Tech Stack: Go 1.25, SQLite, Docker
+## Assignment 1: Native Durable Execution Engine
 
-Key Features:
--Fault Tolerance
-Implements a durable Check–Act–Persist pattern to ensure completed steps are never re-executed after a crash.
+### Tech Stack
+- **Go:** 1.25  
+- **Database:** SQLite (WAL mode enabled)  
+- **Containerization:** Docker & Docker Compose  
 
--Concurrency
-Supports parallel step execution using errgroup with SQLite WAL mode enabled for safe concurrent readers and writers.
+---
 
--Resilience
-Handles the Zombie Step problem by maintaining explicit IN_PROGRESS and COMPLETED states in persistent storage.
+## Key Features
 
--Bonus Feature
-Automatic step ID generation (AutoStep) using an internal logical sequence counter, eliminating the need for manual step identifiers.
+- **Fault Tolerance**
+  - Implements a **Check → Act → Persist** pattern
+  - Ensures completed steps are **never re-executed** after a crash
 
-How to Run (Crash and Resume Demonstration)
+- **Concurrency**
+  - Supports parallel step execution using `errgroup`
+  - SQLite **WAL mode** enabled for safe concurrent reads and writes
 
-The engine is fully containerized so durability can be demonstrated without local environment setup issues.
+- **Resilience**
+  - Handles the **Zombie Step Problem**
+  - Maintains explicit `IN_PROGRESS` and `COMPLETED` states in persistent storage
 
-1. Start the Workflow (Normal Run)
+- **Bonus Feature**
+  - **AutoStep ID generation**
+  - Internal logical sequence counter removes need for manual step identifiers
+
+---
+
+## How to Run (Crash & Resume Demonstration)
+
+The engine is **fully containerized**, allowing durability to be demonstrated without local environment setup issues.
+
+---
+
+### Start the Workflow (Normal Run)
+
+```bash
 cd durable-execution-engine
 docker compose up --build
+```
 
+This runs the onboarding workflow **from start to finish**.
 
-This runs the onboarding workflow from start to finish.
+---
 
-2. Simulate a Crash (Durability Test)
+### Simulate a Crash (Durability Test)
 
-This command intentionally crashes the workflow after a specific number of steps.
+This command intentionally crashes the workflow after a specific number of steps.  
 The SQLite database is mounted to the host machine to preserve state across crashes.
 
-Windows (PowerShell):
-
+#### Windows (PowerShell)
+```powershell
 docker run --rm -v ${PWD}:/root/ durable-execution-engine-durable-engine --crash-after=2
+```
 
-
-Linux / macOS / Git Bash:
-
+#### Linux / macOS / Git Bash
+```bash
 docker run --rm -v $(pwd):/root/ durable-execution-engine-durable-engine --crash-after=2
+```
 
+**Expected Result:**
+- The process panics and exits midway
+- An `engine.db` file appears on the host machine
 
-Expected Result:
-The process panics and exits midway. An engine.db file will be visible on the host machine.
+---
 
-3. Resume Execution
+### Resume Execution
 
 Restart the engine using the default command:
 
+```bash
 docker compose up
+```
 
+**Expected Result:**
+- Previously completed steps are **automatically skipped**
+- The workflow resumes and completes successfully
+- This conclusively proves **durable execution**
 
-Expected Result:
-Previously completed steps are automatically skipped, and the workflow resumes and completes successfully, proving durability.
+---
 
-AI Usage Declaration
+## AI Usage Declaration
 
-As permitted by the assignment instructions, AI tools (ChatGPT and Cursor) were used to accelerate boilerplate generation and explore architectural patterns.
-All core logic, including SQLite durability guarantees, concurrency handling, crash recovery, and Docker persistence, was manually reviewed, refined, and validated through repeated testing.
+As permitted by the assignment instructions, AI tools (**ChatGPT** and **Cursor**) were used to:
 
-A full and transparent record of prompts and manual interventions is provided in Prompts.txt.
+- Accelerate boilerplate generation
+- Explore architectural patterns
+- Validate edge cases and failure scenarios
+
+All **core logic**, including:
+- SQLite durability guarantees  
+- Concurrency handling  
+- Crash recovery semantics  
+- Docker persistence  
+
+was **manually reviewed, refined, and validated** through repeated testing.
+
+A full and transparent record of prompts and manual interventions is provided in **`Prompts.txt`**.
+
+---
+
+## Final Notes
+
+- The system guarantees **no re-execution of completed steps**
+- Crash recovery is deterministic and repeatable
+- Architecture is extensible for additional workflow steps
+- Suitable for production-grade backend orchestration
+
+---

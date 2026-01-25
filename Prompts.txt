@@ -15,7 +15,7 @@ Goal: Build a fault-tolerant engine with SQLite persistence.
 
 3.  Infrastructure (Docker):
     * Prompt: "Create a Docker Compose file that persists the SQLite file."
-    * Manual Fix: The AI originally suggested using a named volume which made it hard to inspect the DB. I changed this to a bind mount (`./workflow.db:/root/workflow.db`) to ensure I could verify the persistence file on the host machine.
+    * Manual Fix: The AI originally suggested using a named volume which made it hard to inspect the DB. I changed this to a bind mount (`./engine.db:/root/engine.db`) to ensure I could verify the persistence file on the host machine.
 
 ## Assignment 2: High-Throughput Fan-Out Engine (Java)
 Goal: High-concurrency ingestion using Java 21 Virtual Threads.
