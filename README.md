@@ -97,7 +97,7 @@ docker run --rm -v ${PWD}\engine.db:/root/engine.db durable-execution-engine-dur
 
 #### Linux / macOS / Git Bash
 ```bash
-docker run --rm -v $(pwd)/engine.db:/root/engine.db durable-execution-engine-durable-engine --crash-after=2
+docker run --rm -v $(pwd)/engine.db:/root/engine.db durable-execution-engine-durable-engine
 ```
 
 **Expected Result:**
