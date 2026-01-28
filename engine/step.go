@@ -25,9 +25,8 @@ func Step[T any](
 	if crashAfter > 0 && currentStep > crashAfter {
 		panic("simulated crash")
 	}
-	// --------------------------------------
 
-	// 1. Generate logical sequence ID (thread-safe)
+	//Generate logical sequence ID (thread-safe)
 	ctx.mu.Lock()
 	seq := ctx.seq
 	ctx.seq++
@@ -35,7 +34,7 @@ func Step[T any](
 
 	stepKey := fmt.Sprintf("%s-%d", id, seq)
 
-	// 2. Check if step already executed
+	//Check if step already executed
 	var storedOutput string
 	var status string
 
@@ -59,7 +58,7 @@ func Step[T any](
 		return zero, err
 	}
 
-	// 3. Mark step as IN_PROGRESS
+	//Mark step as IN_PROGRESS
 	_, err = ctx.DB.Exec(
 		`INSERT INTO steps (workflow_id, step_key, status, output)
 		 VALUES (?, ?, ?, ?)`,
@@ -72,19 +71,19 @@ func Step[T any](
 		return zero, err
 	}
 
-	// 4. Execute user function
+	//Execute user function
 	result, err := fn()
 	if err != nil {
 		return zero, err
 	}
 
-	// 5. Serialize output
+	//Serialize output
 	bytes, err := json.Marshal(result)
 	if err != nil {
 		return zero, err
 	}
 
-	// 6. Mark step as COMPLETED
+	//Mark step as COMPLETED
 	_, err = ctx.DB.Exec(
 		`UPDATE steps
 		 SET status = ?, output = ?
@@ -101,10 +100,6 @@ func Step[T any](
 	return result, nil
 }
 
-// ------------------------------------------------------------
-// BONUS: Automatic Step ID generation
-// ------------------------------------------------------------
-
 // AutoStep executes a durable step without requiring a manual step ID.
 // Uniqueness and determinism are guaranteed by the internal sequence counter.
 func AutoStep[T any](
@@ -113,6 +108,5 @@ func AutoStep[T any](
 ) (T, error) {
 
 	// "__auto__" is only a label.
-	// The real identity is (__auto__ + logical sequence number).
 	return Step(ctx, "__auto__", fn)
 }

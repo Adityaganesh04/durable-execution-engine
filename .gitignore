@@ -1,4 +1,3 @@
-# Binaries
 /bin
 *.exe
 *.exe~
@@ -7,10 +6,8 @@
 *.dylib
 main
 
-# Database (We don't want to commit the production DB)
 *.db
 *.sqlite
 
-# IDE specific
 .vscode/
-.idea/
+.idea/  
