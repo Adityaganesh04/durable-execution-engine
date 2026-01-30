@@ -17,20 +17,18 @@ type DurableContext struct {
 	stepCount  int
 }
 
-// NewDurableContext creates or resumes a workflow context
+// create or continue workflow
 func NewDurableContext(workflowID string, dbPath string) (*DurableContext, error) {
 	db, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
 		return nil, err
 	}
 
-	// Enable better concurrency behavior for SQLite
 	_, err = db.Exec(`PRAGMA journal_mode = WAL;`)
 	if err != nil {
 		return nil, err
 	}
 
-	// Create steps table if not exists
 	createTable := `
 	CREATE TABLE IF NOT EXISTS steps (
 		workflow_id TEXT,
@@ -53,7 +51,7 @@ func NewDurableContext(workflowID string, dbPath string) (*DurableContext, error
 	return ctx, nil
 }
 
-// EnableCrashSimulation configures the context to crash after N steps
+// configure to crash after N step
 func (ctx *DurableContext) EnableCrashSimulation(n int) {
 	ctx.crashAfter = n
 }

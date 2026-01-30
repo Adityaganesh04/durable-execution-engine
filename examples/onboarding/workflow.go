@@ -10,7 +10,7 @@ import (
 
 func RunEmployeeOnboarding(ctx *engine.DurableContext) error {
 
-	//Create employee record (sequential)
+	//Create emp record
 	_, err := engine.AutoStep(ctx, func() (string, error) {
 		log.Println("Creating employee record")
 		return "employee-id-123", nil
@@ -19,7 +19,6 @@ func RunEmployeeOnboarding(ctx *engine.DurableContext) error {
 		return err
 	}
 
-	//Parallel provisioning
 	g := new(errgroup.Group)
 
 	g.Go(func() error {
@@ -42,7 +41,6 @@ func RunEmployeeOnboarding(ctx *engine.DurableContext) error {
 		return err
 	}
 
-	//Send welcome email (sequential)
 	_, err = engine.AutoStep(ctx, func() (string, error) {
 		log.Println("Sending welcome email")
 		return "email-sent", nil

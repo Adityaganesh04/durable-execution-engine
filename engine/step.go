@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-// Step executes a durable step with memoization.
+// step with memoization
 func Step[T any](
 	ctx *DurableContext,
 	id string,
@@ -15,7 +15,6 @@ func Step[T any](
 
 	var zero T
 
-	// ---- Crash simulation (if enabled) ----
 	ctx.mu.Lock()
 	ctx.stepCount++
 	currentStep := ctx.stepCount
@@ -26,7 +25,6 @@ func Step[T any](
 		panic("simulated crash")
 	}
 
-	//Generate logical sequence ID (thread-safe)
 	ctx.mu.Lock()
 	seq := ctx.seq
 	ctx.seq++
@@ -34,7 +32,6 @@ func Step[T any](
 
 	stepKey := fmt.Sprintf("%s-%d", id, seq)
 
-	//Check if step already executed
 	var storedOutput string
 	var status string
 
@@ -58,7 +55,6 @@ func Step[T any](
 		return zero, err
 	}
 
-	//Mark step as IN_PROGRESS
 	_, err = ctx.DB.Exec(
 		`INSERT INTO steps (workflow_id, step_key, status, output)
 		 VALUES (?, ?, ?, ?)`,
@@ -71,19 +67,16 @@ func Step[T any](
 		return zero, err
 	}
 
-	//Execute user function
 	result, err := fn()
 	if err != nil {
 		return zero, err
 	}
 
-	//Serialize output
 	bytes, err := json.Marshal(result)
 	if err != nil {
 		return zero, err
 	}
 
-	//Mark step as COMPLETED
 	_, err = ctx.DB.Exec(
 		`UPDATE steps
 		 SET status = ?, output = ?
@@ -100,13 +93,10 @@ func Step[T any](
 	return result, nil
 }
 
-// AutoStep executes a durable step without requiring a manual step ID.
-// Uniqueness and determinism are guaranteed by the internal sequence counter.
 func AutoStep[T any](
 	ctx *DurableContext,
 	fn func() (T, error),
 ) (T, error) {
 
-	// "__auto__" is only a label.
 	return Step(ctx, "__auto__", fn)
 }
