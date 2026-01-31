@@ -15,7 +15,6 @@ The engine ensures correctness and durability even in the presence of crashes, r
 durable-execution-engine/
 ├── engine/                # Core durable execution engine (Go)
 ├── docker-compose.yml     # Containerized execution setup
-├── Prompts.txt            # AI usage and architectural decision log
 └── README.md              # Project documentation
 ```
 
@@ -104,26 +103,6 @@ docker run --rm -v $(pwd)/engine.db:/root/engine.db durable-execution-engine-dur
 - Previously completed steps are **automatically skipped**
 - The workflow resumes and completes successfully
 - This conclusively proves **durable execution**
-
----
-
-## AI Usage Declaration
-
-AI tools (**ChatGPT** and **Cursor**) were used to:
-
-- Accelerate boilerplate generation
-- Explore architectural patterns
-- Validate edge cases and failure scenarios
-
-All **core logic**, including:
-- SQLite durability guarantees  
-- Concurrency handling  
-- Crash recovery semantics  
-- Docker persistence  
-
-was **manually reviewed, refined, and validated** through repeated testing.
-
-A full and transparent record of prompts and manual interventions is provided in **`Prompts.txt`**.
 
 ---
 
